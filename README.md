@@ -42,15 +42,6 @@ laissez-dom {
     min-height: 1000px;
 }
 </style>
-<script>
-    const list = [];
-    for(let i = 0; i < 1000000; i++){
-        list.push({
-            textContent:`hello ${i}`,
-        });
-    }
-    lazyLoop.items = list;
-</script>
 ```
 
 So how would yet another web component, in addition to laissez-dom, and i-bid, help?
@@ -95,4 +86,11 @@ produces:
     </laissez-dom>
 ```
 
-where my-lazy-loop extends lazy-loop, which uses tagged template libraries (how do existing ones with templates?)
+where my-lazy-loop:
+
+1.  Extends abstract class lazyLoop
+2.  Must implement some rendering method which generates the custom content.
+3.  Can use, for example, tagged template libraries (how well do existing ones with template markup?)
+4.  What value does the base class provide?
+5.  Passing new list "pages".
+6.  Or should laissez-dom simply be enhanced to provide "hooks" for passing new data, no benefit from this web component?

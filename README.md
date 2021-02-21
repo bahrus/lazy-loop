@@ -1,12 +1,12 @@
 # lazy-loop
 
-Let's assume we were back in the pre content-visibility era -- actually, I'm not yet convinced content-visibility fixes all issues -- I've looked at some scenarios (like a server-rendered, fully expanded details/summary tree), and I'm just not able to replicate the savings from this setting (I checked several chrome versions back).  Anyway.  
+Let's assume we are back in the pre [content-visibility](https://web.dev/content-visibility/) era -- actually, I'm not yet convinced content-visibility fixes all issues -- I've looked at some scenarios (like a server-rendered, fully expanded details/summary tree), and I'm just not able to replicate the savings from this setting (I checked several chrome versions back).  Anyway.  
 
-With custom elements / repeating templates, what is a viable strategy for display a large amount of repeating content quickly, that could come within a stone's throw of server-rendered, if not beat it in some cases?
+With custom elements / repeating templates, what is a viable strategy for displaying a large amount of repeating content quickly, that could come within a stone's throw of server-rendered, if not beat it in some cases?
 
 It seems likely that above the fold, often (but I suspect not always?) we want pre-rendered HTML.  But below the fold?
 
-lazy-loop attempts to suggest markup that can accommodate different (but most-likely-to-keep-performance-down) scenarios.
+lazy-loop attempts to suggest markup that can accommodate different (but most-likely-to-keep-performance-on-par-with-server-rendered) scenarios.
 
 ```html
 <ul>
@@ -16,28 +16,23 @@ lazy-loop attempts to suggest markup that can accommodate different (but most-li
     <li>Item 2</li>
     ...
     <li>Item 99</li>
+    <!--Lazy Loaded content -->
     <laissez-dom>
         <template>
-            <script type=application/json>
-            {
-                "ibid": {
-                    "list": ["Item 100", "item 101", ... "item 199"]
-                }
-            }
-            </script>
-            <ib-id></ib-id>
+            <ib-id init-count=100></ib-id>
+            <li>Item 100</li>
+            <li>Item 101</li>
+            ...
+            <li>Item 199</li>
         </template>
     </laissez-dom>
     <laissez-dom>
         <template>
-            <script type=application/json>
-            {
-                "ibid": {
-                    "list": ["Item 100", "item 101", ... "item 199"]
-                }
-            }
-            </script>
-            <ib-id></ib-id>
+            <ib-id init-count=100></ib-id>
+            <li>Item 200</li>
+            <li>Item 201</li>
+            ...
+            <li>Item 299</li>
         </template>
     </laissez-dom>
     <li>footer</li>

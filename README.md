@@ -19,7 +19,7 @@ lazy-loop attempts to suggest markup that can accommodate different (but most-li
     <!--Lazy Loaded content -->
     <laissez-dom>
         <template>
-            <ib-id init-count=100></ib-id>
+            <i-bid init-count=100></i-bid>
             <li>Item 100</li>
             <li>Item 101</li>
             ...
@@ -28,7 +28,7 @@ lazy-loop attempts to suggest markup that can accommodate different (but most-li
     </laissez-dom>
     <laissez-dom>
         <template>
-            <ib-id init-count=100></ib-id>
+            <i-bid init-count=100></i-bid>
             <li>Item 200</li>
             <li>Item 201</li>
             ...
@@ -53,21 +53,46 @@ laissez-dom {
 </script>
 ```
 
+So how would yet another web component, in addition to laissez-dom, and i-bid, help?
+
+In cases where it makes sense to generate this markup in the browser -- maybe in an [element worklet?](https://jasonformat.com/element-worklet/), lazy-loop can (maybe) help:
+
+```html
+<!-- p-et-alia notation -->
+<my-lazy-loop -list></my-lazy-loop>
+```
+
 produces:
 
 ```html
 <ul>
     <li>header</li>
-    <lazy-loop id=lazyLoop page-size=100 tag=li></lazy-loop>
+        <!--Initial Page rendered from Server -->
+    <li>Item 1</li>
+    <li>Item 2</li>
+    ...
+    <li>Item 99</li>
+    <!--Lazy Loaded content -->
+    <my-lazy-loop -list></my-lazy-loop>
+    <!--Lazy Loaded content -->
     <laissez-dom>
         <template>
-            <ib-id tag=li>
+            <i-bid init-count=100></i-bid>
+            <li>Item 100</li>
+            <li>Item 101</li>
+            ...
+            <li>Item 199</li>
         </template>
     </laissez-dom>
-        ...
     <laissez-dom>
         <template>
-            <ib-id tag=li>
+            <i-bid init-count=100></i-bid>
+            <li>Item 200</li>
+            <li>Item 201</li>
+            ...
+            <li>Item 299</li>
         </template>
     </laissez-dom>
 ```
+
+where my-lazy-loop extends lazy-loop, which uses tagged template libraries (how do existing ones with templates?)

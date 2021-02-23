@@ -3,7 +3,24 @@
 [content-visibility](https://web.dev/content-visibility/) may solve some problems effectively, but I'm not yet convinced content-visibility fixes all issues -- I've looked at some scenarios (like a server-rendered, fully expanded details/summary tree as well as a simple ui/li list), and I'm just not able to replicate the savings from content-visibility.  
 
 
-lazy-loop attempts to suggest markup that can accommodate different (but most-likely-to-keep-performance-on-par-with-server-rendered) scenarios.
+lazy-loop generates a lazy list of non-nested (custom) elements.  To provide nested content, the user of lazy-loop will need to encapsulate that nested content via a custom element (with or without ShadowDOM).  It combines two other custom elements, i-bid and laissez-dom.  It essentially creates a facade of i-bid, but with support for lazy loading.
+
+Like i-bid, lazy-loop can work in tandem with server-rendered HTML.  However, it is more client-side centric, in that the content in generates (can be) generated from a [streamed](https://web.dev/streams/) source of data, which can be partitioned into "pages" of grouped data.  These pages are lazy loaded into the DOM when scrolled into view.
+
+```html
+<!-- p-et-alia notation -->
+<ul>
+    <li>header</li>
+        <!--Initial Page rendered from Server -->
+    <li>Item 1</li>
+    <li>Item 2</li>
+    ...
+    <li>Item 99</li>
+    <lazy-loop -paged-list -new-page></lazy-loop>
+</ul>
+```
+
+produces, after passing in a corresponding list to lazy-loop:
 
 ```html
 <ul>
@@ -16,17 +33,12 @@ lazy-loop attempts to suggest markup that can accommodate different (but most-li
     <!--Lazy Loaded content -->
     <laissez-dom>
         <template>
-            <i-bid init-count=100></i-bid>
-            
+            <i-bid></i-bid>
         </template>
     </laissez-dom>
     <laissez-dom>
         <template>
-            <i-bid init-count=100></i-bid>
-            <li>Item 200</li>
-            <li>Item 201</li>
-            ...
-            <li>Item 299</li>
+            <i-bid></i-bid>
         </template>
     </laissez-dom>
     <li>footer</li>
@@ -38,61 +50,4 @@ laissez-dom {
 </style>
 ```
 
-So how would yet another web component, in addition to laissez-dom, and i-bid, help?
-
-In cases where it makes sense to generate this markup in the browser -- maybe in an [element worklet?](https://jasonformat.com/element-worklet/), lazy-loop can (maybe) help:
-
-```html
-<!-- p-et-alia notation -->
-<ul>
-    <li>header</li>
-        <!--Initial Page rendered from Server -->
-    <li>Item 1</li>
-    <li>Item 2</li>
-    ...
-    <li>Item 99</li>
-    <my-lazy-loop -list></my-lazy-loop>
-</ul>
-```
-
-produces:
-
-```html
-<ul>
-    <li>header</li>
-        <!--Initial Page rendered from Server -->
-    <li>Item 1</li>
-    <li>Item 2</li>
-    ...
-    <li>Item 99</li>
-    <!--Lazy Loaded content -->
-    <my-lazy-loop -list></my-lazy-loop>
-    <!--Lazy Loaded content -->
-    <laissez-dom>
-        <template>
-            <i-bid init-count=100></i-bid>
-            <li>Item 100</li>
-            <li>Item 101</li>
-            ...
-            <li>Item 199</li>
-        </template>
-    </laissez-dom>
-    <laissez-dom>
-        <template>
-            <i-bid init-count=100></i-bid>
-            <li>Item 200</li>
-            <li>Item 201</li>
-            ...
-            <li>Item 299</li>
-        </template>
-    </laissez-dom>
-```
-
-where my-lazy-loop:
-
-1.  Extends abstract class lazyLoop
-2.  Must implement some rendering method which generates the custom content.
-3.  Can use, for example, tagged template libraries (how well do existing ones with template markup?)
-4.  What value does the base class provide?
-5.  Passing new list "pages".
-6.  Or should laissez-dom simply be enhanced to provide "hooks" for passing new data, no benefit from this web component?
+lazy-loop passes the "page" of data to i-bid after laissez-dom becomes visible (and exposes the template contents).

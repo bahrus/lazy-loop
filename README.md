@@ -1,10 +1,7 @@
 # lazy-loop
 
-Let's assume we are back in the pre [content-visibility](https://web.dev/content-visibility/) era -- actually, I'm not yet convinced content-visibility fixes all issues -- I've looked at some scenarios (like a server-rendered, fully expanded details/summary tree), and I'm just not able to replicate the savings from this setting (I checked several chrome versions back).  Anyway.  
+[content-visibility](https://web.dev/content-visibility/) may solve some problems effectively, but I'm not yet convinced content-visibility fixes all issues -- I've looked at some scenarios (like a server-rendered, fully expanded details/summary tree as well as a simple ui/li list), and I'm just not able to replicate the savings from content-visibility.  
 
-With custom elements / repeating templates, what is a viable strategy for displaying a large amount of repeating content quickly, that could come within a stone's throw of server-rendered, if not beat it in some cases?
-
-It seems likely that above the fold, often (but I suspect not always?) we want pre-rendered HTML.  But below the fold?
 
 lazy-loop attempts to suggest markup that can accommodate different (but most-likely-to-keep-performance-on-par-with-server-rendered) scenarios.
 
@@ -20,10 +17,7 @@ lazy-loop attempts to suggest markup that can accommodate different (but most-li
     <laissez-dom>
         <template>
             <i-bid init-count=100></i-bid>
-            <li>Item 100</li>
-            <li>Item 101</li>
-            ...
-            <li>Item 199</li>
+            
         </template>
     </laissez-dom>
     <laissez-dom>
@@ -50,7 +44,15 @@ In cases where it makes sense to generate this markup in the browser -- maybe in
 
 ```html
 <!-- p-et-alia notation -->
-<my-lazy-loop -list></my-lazy-loop>
+<ul>
+    <li>header</li>
+        <!--Initial Page rendered from Server -->
+    <li>Item 1</li>
+    <li>Item 2</li>
+    ...
+    <li>Item 99</li>
+    <my-lazy-loop -list></my-lazy-loop>
+</ul>
 ```
 
 produces:
